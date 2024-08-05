@@ -6,6 +6,15 @@ const prisma = new PrismaClient()
 export async function POST(request: Request) {
   const { freshmanId } = (await request.json()) as { freshmanId: string }
 
+  // Check if the freshman exists
+  const freshman = await prisma.freshman.findUnique({
+    where: { id: freshmanId },
+  })
+
+  if (!freshman) {
+    return NextResponse.json({ error: "Freshman not found" }, { status: 404 })
+  }
+
   // Check if the freshman is already matched
   const existingMatch = await prisma.sophomore.findFirst({
     where: {
@@ -21,7 +30,6 @@ export async function POST(request: Request) {
   })
 
   if (existingMatch) {
-    // Determine which freshman slot this freshman occupies
     const isFirstFreshman = existingMatch.freshman1 === freshmanId
     const clue = isFirstFreshman
       ? existingMatch.clueForFreshman1

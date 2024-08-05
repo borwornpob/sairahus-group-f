@@ -1,4 +1,3 @@
-// File: app/page.tsx
 "use client"
 
 import React, { useState } from "react"
@@ -9,6 +8,7 @@ interface MatchResult {
   sophomoreId?: string
   clue?: string
   isExistingMatch?: boolean
+  error?: string
 }
 
 export default function Home() {
@@ -19,7 +19,7 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setMatchResult(null) // Clear previous results
+    setMatchResult(null)
     try {
       const response = await fetch("/api/match", {
         method: "POST",
@@ -30,7 +30,10 @@ export default function Home() {
       setMatchResult(data)
     } catch (error) {
       console.error("Error fetching match:", error)
-      // Optionally set an error state here
+      setMatchResult({
+        matched: false,
+        error: "An error occurred while matching",
+      })
     } finally {
       setIsLoading(false)
     }
@@ -92,7 +95,11 @@ export default function Home() {
         )}
         {!isLoading && matchResult && (
           <div className="bg-gray-50 border border-gray-200 rounded-md p-4">
-            {matchResult.matched ? (
+            {matchResult.error ? (
+              <p className="text-red-600 text-lg font-semibold">
+                {matchResult.error}
+              </p>
+            ) : matchResult.matched ? (
               <div>
                 <p
                   className={`text-lg font-semibold mb-2 ${

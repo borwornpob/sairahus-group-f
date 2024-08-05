@@ -8,6 +8,17 @@ export async function POST(request: Request) {
   const { id, name, nickname } = body
 
   try {
+    const existingFreshman = await prisma.freshman.findUnique({
+      where: { id },
+    })
+
+    if (existingFreshman) {
+      return NextResponse.json(
+        { error: "A freshman with this ID already exists" },
+        { status: 400 }
+      )
+    }
+
     const freshman = await prisma.freshman.create({
       data: {
         id,
@@ -19,7 +30,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error adding freshman:", error)
     return NextResponse.json(
-      { error: "Failed to add freshman" },
+      { error: "Failed to add freshman. Please try again." },
       { status: 500 }
     )
   }

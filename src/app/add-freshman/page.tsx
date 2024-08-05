@@ -8,11 +8,13 @@ export default function AddFreshman() {
   const [name, setName] = useState("")
   const [nickname, setNickname] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError("")
     try {
       const response = await fetch("/api/add-freshman", {
         method: "POST",
@@ -22,11 +24,12 @@ export default function AddFreshman() {
       if (response.ok) {
         router.push("/")
       } else {
-        // Handle error
-        console.error("Failed to add freshman")
+        const errorData = await response.json()
+        setError(errorData.error || "Failed to add freshman")
       }
     } catch (error) {
       console.error("Error adding freshman:", error)
+      setError("An unexpected error occurred")
     } finally {
       setIsLoading(false)
     }
@@ -38,6 +41,14 @@ export default function AddFreshman() {
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Add Freshman
         </h1>
+        {error && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+            role="alert"
+          >
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"

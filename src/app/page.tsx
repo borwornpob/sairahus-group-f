@@ -2,6 +2,7 @@
 "use client"
 
 import React, { useState } from "react"
+import Link from "next/link"
 
 interface MatchResult {
   matched: boolean
@@ -41,6 +42,26 @@ export default function Home() {
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Freshman-Sophomore Matching System
         </h1>
+        <nav className="mb-6">
+          <ul className="flex justify-center space-x-4">
+            <li>
+              <Link
+                href="/add-sophomore"
+                className="text-blue-500 hover:text-blue-700"
+              >
+                Add Sophomore
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/add-freshman"
+                className="text-blue-500 hover:text-blue-700"
+              >
+                Add Freshman
+              </Link>
+            </li>
+          </ul>
+        </nav>
         <form onSubmit={handleSubmit} className="mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <input
